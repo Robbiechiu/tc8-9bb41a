@@ -31,7 +31,8 @@
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; padding: 28px 40px; }
 
   /* CARD */
-  .card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07); overflow: hidden; transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; }
+  .card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07); overflow: hidden; position: relative; transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; }
+  .officer { position: absolute; top: 12px; right: 12px; background: #1B3A5C; color: #F5D76E; font-weight: 700; font-size: .74rem; padding: 3px 11px; border-radius: 11px; box-shadow: 0 1px 5px rgba(0,0,0,.18); z-index: 2; white-space: nowrap; }
   .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
   .card.hidden { display: none; }
 
@@ -106,20 +107,35 @@
 
 <script>
 const members = [
+  { name:"邱彥霖（羅伯特）", company:"羅伯特農場", title:"農場主人", industry:"ag", tag:"科技農業", officer:"🏆 會長",
+    desc:"科技農業顧問與農場主，以現代溫室技術結合 AI 數據管理種植高品質農產品，主打無農藥、安全食材，同時整合荷蘭頂級農業技術，提供農業投資顧問與溫室規劃服務。",
+    web:"" },
+  { name:"呂家豪（Nick）", company:"鼎兆元股份有限公司", title:"總經理", industry:"food", tag:"住宿餐飲", officer:"🥈 副會長",
+    desc:"餐飲業，經營複合式餐廳品牌，提供特色餐食服務，聚焦顧客用餐體驗與食材品質，並積極導入數位點餐與營運管理系統。",
+    web:"" },
+  { name:"郭俊村（馬怪）", company:"", title:"", industry:"other", tag:"資料待補", officer:"💰 財務長",
+    desc:"（成員資料待補充，歡迎提供）",
+    web:"" },
+  { name:"邱柏萍", company:"", title:"", industry:"other", tag:"資料待補", officer:"🏛️ 總務長",
+    desc:"（成員資料待補充，歡迎提供）",
+    web:"" },
   { name:"李海碩（海碩校長）", company:"葳格國際學校", title:"總校長", industry:"edu", tag:"教育業",
     desc:"全台知名國際學校集團，提供幼兒園至高中全程國際雙語教育，課程以英語沉浸式教學為核心，涵蓋 IB、AP 等國際認證課程，培育具全球競爭力的雙語人才。",
     web:"https://www.wagor.tc.edu.tw/" },
   { name:"陳大黑（大黑哥）", company:"博克多運動產業有限公司", title:"負責人", industry:"sport", tag:"運動產業",
     desc:"專注運動產業整合，提供企業體能訓練課程設計、運動場館規劃與管理、運動健身活動策劃等服務，並代理或銷售運動器材與訓練輔具。",
     web:"https://www.bogoto.com.tw/" },
+  { name:"蔡政璋（小飛）", company:"聚勤力有限公司", title:"負責人", industry:"food", tag:"住宿餐飲業",
+    desc:"餐飲業者，經營餐廳或餐飲服務品牌，提供正餐、外帶或外送等餐食服務，聚焦台灣在地飲食文化與顧客體驗。",
+    web:"" },
+  { name:"廖宜威（Tony）", company:"得利誠健康生活科技股份有限公司", title:"總經理", industry:"health", tag:"健康科技",
+    desc:"健康生活科技公司，研發並銷售保健食品、健康管理器材或生技相關產品，結合電商平台進行 B2C 及 B2B 通路銷售，聚焦提升現代人生活健康品質。",
+    web:"https://www.gootencn.com/" },
   { name:"楊紹民", company:"楊紹民心靈自然診所", title:"負責人", industry:"health", tag:"醫療保健",
     desc:"身心靈整合診所，結合自然醫學與心理諮商，提供情緒釋放、壓力管理、能量療癒及整體身心調理等服務，走向自然無藥療癒路線。",
     web:"https://www.non-drug.clinic/" },
   { name:"黃鳳雅（風扇）", company:"健康減脂顧問", title:"", industry:"health", tag:"醫療保健",
     desc:"個人健康管理顧問服務，提供客製化減脂計畫、體態雕塑指導、飲食調整建議及代謝分析，協助客戶達成健康體重管理目標。",
-    web:"" },
-  { name:"蔡政璋（小飛）", company:"聚勤力有限公司", title:"負責人", industry:"food", tag:"住宿餐飲業",
-    desc:"餐飲業者，經營餐廳或餐飲服務品牌，提供正餐、外帶或外送等餐食服務，聚焦台灣在地飲食文化與顧客體驗。",
     web:"" },
   { name:"郭靜玉", company:"全家便利商店", title:"加盟者", industry:"retail", tag:"流通零售",
     desc:"全家便利商店加盟門市，提供 24 小時全年無休的零售服務，商品涵蓋鮮食、飲料、日用品，並整合繳費、取件、ATM 等多元生活服務。",
@@ -127,9 +143,6 @@ const members = [
   { name:"陳定緯（Jim）", company:"鈞豐國際", title:"經理", industry:"mfg", tag:"製造業",
     desc:"國際貿易與製造公司，主要從事工業零件或消費品的生產與進出口業務，提供 OEM/ODM 代工製造及海外市場開發服務。",
     web:"https://genfore-bag.com/" },
-  { name:"廖宜威（Tony）", company:"得利誠健康生活科技股份有限公司", title:"總經理", industry:"health", tag:"健康科技",
-    desc:"健康生活科技公司，研發並銷售保健食品、健康管理器材或生技相關產品，結合電商平台進行 B2C 及 B2B 通路銷售，聚焦提升現代人生活健康品質。",
-    web:"https://www.gootencn.com/" },
   { name:"林士峯", company:"舜暉鋼鐵股份有限公司", title:"業務經理", industry:"mfg", tag:"鋼鐵製造",
     desc:"鋼鐵製造與貿易公司，提供型鋼、板材、棒材、管材等各式工業用鋼鐵材料，服務營建、機械、製造等下游產業客戶。",
     web:"https://www.shunhuisteel.com/" },
@@ -169,12 +182,6 @@ const members = [
   { name:"詹惟任", company:"瑞允國際行銷有限公司", title:"創辦人 執行長", industry:"mkt", tag:"國際行銷",
     desc:"國際行銷公司，提供跨境電商平台經營、品牌海外市場開拓、數位廣告投放及整合行銷策略服務，協助台灣品牌進軍國際市場。",
     web:"https://www.luredada.com/" },
-  { name:"邱彥霖（羅伯特）", company:"羅伯特農場", title:"農場主人", industry:"ag", tag:"科技農業",
-    desc:"科技農業顧問與農場主，以現代溫室技術結合 AI 數據管理種植高品質農產品，主打無農藥、安全食材，同時整合荷蘭頂級農業技術，提供農業投資顧問與溫室規劃服務。",
-    web:"" },
-  { name:"呂家豪（Nick）", company:"鼎兆元股份有限公司", title:"總經理", industry:"food", tag:"住宿餐飲",
-    desc:"餐飲業，經營複合式餐廳品牌，提供特色餐食服務，聚焦顧客用餐體驗與食材品質，並積極導入數位點餐與營運管理系統。",
-    web:"" },
   { name:"簡妙珊（Miao）", company:"大綠地家具", title:"負責人", industry:"mfg", tag:"家具製造",
     desc:"家具製造與零售商，提供各式住宅及商業空間家具設計、訂製生產及銷售服務，主打環保材質與台灣在地製造，提供空間整體搭配方案。",
     web:"https://www.outdoors-tw.com.tw/" },
@@ -238,16 +245,10 @@ const members = [
   { name:"吳思佳", company:"歐娜國際股份有限公司", title:"中區督導", industry:"retail", tag:"美容保養品",
     desc:"美容保養品公司，批發零售護膚、彩妝及個人護理相關產品，以中區督導身分負責通路管理與業績推動，服務美容沙龍、藥妝通路及直銷會員等多元客群。",
     web:"" },
-  { name:"邱柏萍", company:"", title:"", industry:"other", tag:"資料待補",
-    desc:"（成員資料待補充，歡迎提供）",
-    web:"" },
   { name:"楊雅如", company:"", title:"", industry:"other", tag:"資料待補",
     desc:"（成員資料待補充，歡迎提供）",
     web:"" },
   { name:"王俊杰（JJ）", company:"", title:"", industry:"other", tag:"資料待補",
-    desc:"（成員資料待補充，歡迎提供）",
-    web:"" },
-  { name:"郭俊村", company:"", title:"", industry:"other", tag:"資料待補",
     desc:"（成員資料待補充，歡迎提供）",
     web:"" },
   { name:"張書宇", company:"", title:"", industry:"other", tag:"資料待補",
@@ -313,6 +314,8 @@ function buildCards() {
         </a>`
       : `<span class="no-web">尚無官方網站資料</span>`;
 
+    const officerHtml = m.officer ? `<div class="officer">${m.officer}</div>` : '';
+
     const card = document.createElement('div');
     card.className = 'card';
     card.dataset.industry = m.industry;
@@ -321,6 +324,7 @@ function buildCards() {
     card.dataset.tag = m.tag;
     card.dataset.hasWeb = m.web ? 'yes' : 'no';
     card.innerHTML = `
+      ${officerHtml}
       <div class="card-top">
         <div class="avatar" style="background:${color}">${initial}</div>
         <div class="name-block">
