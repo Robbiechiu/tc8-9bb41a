@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CXO TC8 審核台</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Arial','PingFang TC','Microsoft JhengHei',sans-serif; background: #f0f4f8; color: #222; padding: 0 0 40px; }
+  .header { background: linear-gradient(135deg,#15296B 0%,#1E40A0 58%,#2B57C4 100%); color: #fff; padding: 26px 22px; }
+  .header h1 { font-size: 1.4rem; letter-spacing: 1px; }
+  .header p { font-size: .85rem; opacity: .85; margin-top: 4px; }
+  .wrap { max-width: 680px; margin: 22px auto; padding: 0 18px; }
+  .card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.08); padding: 22px; margin-bottom: 18px; }
+  label { display: block; font-size: .82rem; font-weight: 600; color: #15296B; margin: 12px 0 5px; }
+  input, select, textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #d0d8e4; border-radius: 8px; font-size: .92rem; outline: none; font-family: inherit; }
+  input:focus, textarea:focus { border-color: #2B57C4; }
+  textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
+  button { padding: 11px 18px; border: none; border-radius: 8px; font-size: .95rem; font-weight: 700; cursor: pointer; }
+  .pw-row { display: flex; gap: 10px; }
+  .pw-row input { flex: 1; }
+  .btn-primary { background: #1E40A0; color: #fff; }
+  .btn-approve { background: #1a7a3f; color: #fff; flex: 1; }
+  .btn-reject { background: #c0392b; color: #fff; flex: 1; }
+  .rev h3 { color: #15296B; font-size: 1.05rem; margin-bottom: 6px; }
+  .rev .sub { font-size: .76rem; color: #999; margin-bottom: 8px; }
+  .old { font-size: .78rem; color: #888; background: #f7f9fc; padding: 2px 8px; border-radius: 6px; margin-top: 3px; }
+  .actions { display: flex; gap: 10px; margin-top: 16px; }
+  .msg { padding: 12px; border-radius: 8px; font-size: .9rem; text-align: center; margin-top: 12px; }
+  .msg.ok { background: #e6f6ec; color: #1a7a3f; }
+  .msg.err { background: #fdecea; color: #c0392b; }
+  .hidden { display: none; }
+  .empty { text-align: center; color: #888; padding: 30px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>CXO TC8 審核台</h1>
+  <p>會長專用 · 審核成員送出的資料更新</p>
+</div>
+<div class="wrap">
+  <div class="card" id="login">
+    <label>會長密碼</label>
+    <div class="pw-row">
+      <input type="password" id="pw" placeholder="輸入審核密碼">
+      <button class="btn-primary" onclick="login()">登入</button>
+    </div>
+    <div id="loginMsg"></div>
+  </div>
+  <div id="list"></div>
+</div>
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbxda24yHBLXrum3p3CTiLkUTh3ZIE-4XOvAW06Ovy3oAdnx0Xmr-mmBfeRmGmCp5V2VsA/exec';
+let password = '', pending = [], membersById = {};
+
+async function post(body) {
+  const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(body) });
+  return res.json();
+}
+
+async function login() {
+  password = document.getElementById('pw').value;
+  // 取現有資料做新舊對照
+  try {
+    const md = await (await fetch(API_URL + '?action=members')).json();
+    membersById = {};
+    (md.members || []).forEach(m => membersById[m.id] = m);
+  } catch (e) {}
+  const data = await post({ action: 'list_pending', password });
+  if (!data.ok) {
+    const m = document.getElementById('loginMsg');
+    m.className = 'msg err';
+    m.textContent = data.error === 'bad password' ? '密碼錯誤' : ('登入失敗：' + data.error);
+    return;
+  }
+  pending = data.pending;
+  render();
+}
+
+function fld(label, id, oldVal, newVal, isArea) {
+  const changed = (oldVal || '') !== (newVal || '');
+  const oldLine = changed ? `<div class="old">原本：${escapeHtml(oldVal || '（空白）')}</div>` : '';
+  const input = isArea
+    ? `<textarea id="${id}">${escapeHtml(newVal || '')}</textarea>`
+    : `<input id="${id}" value="${escapeHtml(newVal || '')}">`;
+  return `<label>${label}${changed ? ' ✏️' : ''}</label>${input}${oldLine}`;
+}
+
+function render() {
+  const box = document.getElementById('list');
+  if (!pending.length) { box.innerHTML = '<div class="card empty">目前沒有待審核項目 🎉</div>'; return; }
+  box.innerHTML = pending.map((p, i) => {
+    const o = membersById[p.id] || {};
+    return `<div class="card rev">
+      <h3>${escapeHtml(p.name)}</h3>
+      <div class="sub">提交於 ${new Date(p.submit_time).toLocaleString('zh-TW')}</div>
+      ${fld('顯示名','n'+i,o.name,p.name)}
+      ${fld('公司名稱','c'+i,o.company,p.company)}
+      ${fld('職稱','t'+i,o.title,p.title)}
+      ${fld('產業類別','ind'+i,o.industry,p.industry)}
+      ${fld('產業標籤','tag'+i,o.tag,p.tag)}
+      ${fld('自我介紹','d'+i,o.desc,p.desc,true)}
+      ${fld('官方網站','w'+i,o.web,p.web)}
+      <div class="actions">
+        <button class="btn-approve" onclick="approve(${i})">核可上線</button>
+        <button class="btn-reject" onclick="reject(${i})">退回</button>
+      </div>
+      <div id="m${i}"></div>
+    </div>`;
+  }).join('');
+}
+
+async function approve(i) {
+  const p = pending[i];
+  const edited = {
+    name: val('n'+i), company: val('c'+i), title: val('t'+i),
+    industry: val('ind'+i), tag: val('tag'+i), desc: val('d'+i), web: val('w'+i)
+  };
+  const data = await post({ action: 'approve', password, row: p.row, edited });
+  if (data.ok) { msg(i, '已核可上線 ✓', true); setTimeout(login, 700); }
+  else msg(i, '失敗：' + data.error, false);
+}
+
+async function reject(i) {
+  if (!confirm('確定退回這筆？（成員的修改不會套用）')) return;
+  const data = await post({ action: 'reject', password, row: pending[i].row });
+  if (data.ok) { msg(i, '已退回', true); setTimeout(login, 700); }
+  else msg(i, '失敗：' + data.error, false);
+}
+
+function val(id){ return document.getElementById(id).value; }
+function msg(i, t, ok){ const m=document.getElementById('m'+i); m.className='msg '+(ok?'ok':'err'); m.textContent=t; }
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
