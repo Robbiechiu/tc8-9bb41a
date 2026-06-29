@@ -184,6 +184,7 @@ function buildCards() {
       ${m.intro ? `<div class="card-intro">「${m.intro}」</div>` : ''}
       ${m.resource ? `<div class="card-extra"><b>可提供</b>：${m.resource}</div>` : ''}
       ${m.wish ? `<div class="card-extra"><b>想找</b>：${m.wish}</div>` : ''}
+      ${m.topic ? `<div class="card-extra"><b>關注</b>：${m.topic}</div>` : ''}
       <div class="card-footer">${webHtml}</div>`;
     grid.appendChild(card);
   });
