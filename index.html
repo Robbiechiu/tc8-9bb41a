@@ -38,6 +38,19 @@
   /* GRID */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; padding: 28px 40px; }
 
+  /* MOBILE (手機直向：頭部改為置中堆疊，標語允許換行，避免右側溢出被裁切) */
+  @media (max-width: 640px) {
+    .header { flex-direction: column; align-items: center; text-align: center; padding: 26px 20px; gap: 18px; }
+    .header-left { flex-direction: column; align-items: center; gap: 14px; }
+    .logo { width: 92px; height: 92px; }
+    .header h1 { font-size: 3rem; letter-spacing: 4px; }
+    .header-right { align-items: center; width: 100%; gap: 12px; }
+    .stats { justify-content: center; gap: 48px; }
+    .slogan { white-space: normal; line-height: 1.5; font-size: .95rem; }
+    .toolbar { padding-left: 18px; padding-right: 18px; }
+    .grid { padding: 22px 18px; }
+  }
+
   /* CARD */
   .card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07); overflow: hidden; position: relative; transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; }
   .officer { position: absolute; top: 12px; right: 12px; background: #E76318; color: #fff; font-weight: 700; font-size: .74rem; padding: 3px 11px; border-radius: 11px; box-shadow: 0 1px 5px rgba(0,0,0,.18); z-index: 2; white-space: nowrap; }
