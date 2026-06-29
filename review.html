@@ -93,7 +93,7 @@ function render() {
   box.innerHTML = pending.map((p, i) => {
     const o = membersById[p.id] || {};
     return `<div class="card rev">
-      <h3>${escapeHtml(p.name)}</h3>
+      <h3>${p.id ? '' : '🆕 新成員申請：'}${escapeHtml(p.name)}</h3>
       <div class="sub">提交於 ${new Date(p.submit_time).toLocaleString('zh-TW')}</div>
       ${fld('顯示名','n'+i,o.name,p.name)}
       ${fld('公司名稱','c'+i,o.company,p.company)}

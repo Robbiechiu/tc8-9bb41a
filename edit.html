@@ -98,7 +98,7 @@ async function loadList() {
     const data = await res.json();
     members = data.members || [];
     const sel = document.getElementById('who');
-    sel.innerHTML = '<option value="">— 請選擇 —</option>' +
+    sel.innerHTML = '<option value="">— 請選擇 —</option><option value="__NEW__">➕ 我是新成員（不在名單上）</option>' +
       members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
   } catch (e) {
     document.getElementById('who').innerHTML = '<option>名單載入失敗，請重整</option>';
@@ -108,14 +108,21 @@ async function loadList() {
 function pick() {
   const id = document.getElementById('who').value;
   if (!id) { alert('請先選擇你的名字'); return; }
-  me = members.find(m => String(m.id) === String(id));
-  document.getElementById('f_name').value = me.name || '';
-  document.getElementById('f_company').value = me.company || '';
-  document.getElementById('f_title').value = me.title || '';
-  document.getElementById('f_industry').value = me.industry || 'other';
-  document.getElementById('f_tag').value = me.tag || '';
-  document.getElementById('f_desc').value = me.desc || '';
-  document.getElementById('f_web').value = me.web || '';
+  if (id === '__NEW__') {
+    me = { id: '' };
+    ['f_name','f_company','f_title','f_tag','f_desc','f_web'].forEach(k => document.getElementById(k).value = '');
+    document.getElementById('f_industry').value = 'other';
+    document.getElementById('f_name').placeholder = '請填你的姓名（暱稱），例：王小明（Ming）';
+  } else {
+    me = members.find(m => String(m.id) === String(id));
+    document.getElementById('f_name').value = me.name || '';
+    document.getElementById('f_company').value = me.company || '';
+    document.getElementById('f_title').value = me.title || '';
+    document.getElementById('f_industry').value = me.industry || 'other';
+    document.getElementById('f_tag').value = me.tag || '';
+    document.getElementById('f_desc').value = me.desc || '';
+    document.getElementById('f_web').value = me.web || '';
+  }
   document.getElementById('step2').classList.remove('hidden');
   document.getElementById('step2').scrollIntoView({ behavior: 'smooth' });
 }
