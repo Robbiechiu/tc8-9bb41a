@@ -101,6 +101,9 @@ function render() {
       ${fld('產業類別','ind'+i,o.industry,p.industry)}
       ${fld('產業標籤','tag'+i,o.tag,p.tag)}
       ${fld('自我介紹','d'+i,o.desc,p.desc,true)}
+      ${fld('一句話自介','intro'+i,o.intro,p.intro)}
+      ${fld('可提供資源','res'+i,o.resource,p.resource,true)}
+      ${fld('希望在TC8獲得','wish'+i,o.wish,p.wish,true)}
       ${fld('官方網站','w'+i,o.web,p.web)}
       <div class="actions">
         <button class="btn-approve" onclick="approve(${i})">核可上線</button>
@@ -115,7 +118,8 @@ async function approve(i) {
   const p = pending[i];
   const edited = {
     name: val('n'+i), company: val('c'+i), title: val('t'+i),
-    industry: val('ind'+i), tag: val('tag'+i), desc: val('d'+i), web: val('w'+i)
+    industry: val('ind'+i), tag: val('tag'+i), desc: val('d'+i), web: val('w'+i),
+    intro: val('intro'+i), resource: val('res'+i), wish: val('wish'+i)
   };
   const data = await post({ action: 'approve', password, row: p.row, edited });
   if (data.ok) { msg(i, '已核可上線 ✓', true); setTimeout(login, 700); }

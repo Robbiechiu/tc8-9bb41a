@@ -56,9 +56,12 @@
   .card-company .co-name { font-size: .95rem; font-weight: 600; color: #1E40A0; margin-bottom: 2px; }
   .card-company .co-title { font-size: .82rem; color: #666; }
 
-  .card-desc { padding: 14px 20px; font-size: .85rem; line-height: 1.65; color: #444; flex: 1; }
+  .card-desc { padding: 14px 20px 8px; font-size: .85rem; line-height: 1.65; color: #444; }
+  .card-intro { padding: 0 20px 8px; font-size: .86rem; font-style: italic; color: #1E40A0; line-height: 1.55; }
+  .card-extra { padding: 0 20px 8px; font-size: .8rem; color: #555; line-height: 1.55; }
+  .card-extra b { color: #E76318; font-weight: 700; }
 
-  .card-footer { padding: 12px 20px; border-top: 1px solid #f0f4f8; display: flex; align-items: center; gap: 10px; }
+  .card-footer { padding: 12px 20px; border-top: 1px solid #f0f4f8; display: flex; align-items: center; gap: 10px; margin-top: auto; }
   .web-link { display: flex; align-items: center; gap: 6px; font-size: .82rem; color: #2B57C4; text-decoration: none; font-weight: 600; }
   .web-link:hover { color: #15296B; text-decoration: underline; }
   .web-link svg { flex-shrink: 0; }
@@ -178,6 +181,9 @@ function buildCards() {
         <div class="co-title">${m.title}</div>
       </div>
       <div class="card-desc">${m.desc}</div>
+      ${m.intro ? `<div class="card-intro">「${m.intro}」</div>` : ''}
+      ${m.resource ? `<div class="card-extra"><b>可提供</b>：${m.resource}</div>` : ''}
+      ${m.wish ? `<div class="card-extra"><b>想找</b>：${m.wish}</div>` : ''}
       <div class="card-footer">${webHtml}</div>`;
     grid.appendChild(card);
   });

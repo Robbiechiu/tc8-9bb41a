@@ -80,6 +80,12 @@
     <input id="f_tag">
     <label>自我介紹</label>
     <textarea id="f_desc"></textarea>
+    <label>一句話自我介紹</label>
+    <input id="f_intro" placeholder="用一句話形容你自己">
+    <label>可以提供的資源／我擅長</label>
+    <textarea id="f_resource"></textarea>
+    <label>希望在 TC8 獲得</label>
+    <textarea id="f_wish"></textarea>
     <label>官方網站（可留空）</label>
     <input id="f_web" placeholder="https://">
     <p class="locked">※ 幹部頭銜與排序由會長管理，這裡不會更動。</p>
@@ -110,7 +116,7 @@ function pick() {
   if (!id) { alert('請先選擇你的名字'); return; }
   if (id === '__NEW__') {
     me = { id: '' };
-    ['f_name','f_company','f_title','f_tag','f_desc','f_web'].forEach(k => document.getElementById(k).value = '');
+    ['f_name','f_company','f_title','f_tag','f_desc','f_web','f_intro','f_resource','f_wish'].forEach(k => document.getElementById(k).value = '');
     document.getElementById('f_industry').value = 'other';
     document.getElementById('f_name').placeholder = '請填你的姓名（暱稱），例：王小明（Ming）';
   } else {
@@ -121,6 +127,9 @@ function pick() {
     document.getElementById('f_industry').value = me.industry || 'other';
     document.getElementById('f_tag').value = me.tag || '';
     document.getElementById('f_desc').value = me.desc || '';
+    document.getElementById('f_intro').value = me.intro || '';
+    document.getElementById('f_resource').value = me.resource || '';
+    document.getElementById('f_wish').value = me.wish || '';
     document.getElementById('f_web').value = me.web || '';
   }
   document.getElementById('step2').classList.remove('hidden');
@@ -135,7 +144,8 @@ async function submitForm() {
   const payload = {
     id: me.id,
     name: val('f_name'), company: val('f_company'), title: val('f_title'),
-    industry: val('f_industry'), tag: val('f_tag'), desc: val('f_desc'), web: val('f_web')
+    industry: val('f_industry'), tag: val('f_tag'), desc: val('f_desc'), web: val('f_web'),
+    intro: val('f_intro'), resource: val('f_resource'), wish: val('f_wish')
   };
   try {
     const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'submit', password: pw, payload }) });
